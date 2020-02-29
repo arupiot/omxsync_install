@@ -18,30 +18,36 @@ from config import (
                     ACCESS_IP
                     )
 
-pi_cxn = Connection(host=ACCESS_IP,
+cxn = Connection(host=ACCESS_IP,
                  user=USERNAME,
                  connect_kwargs={"password": PASSWORD},
                  port=22)
 
 @task
 def omxplayer_sync(junk):
-    remove_bloat(pi_cxn)
-    install_omxplayer_sync(pi_cxn)
+    remove_bloat()
+    install_omxplayer_sync()
 
 @task
 def make_master(junk):
-    cnx.sudo("echo \"ExecStart=/usr/bin/omxplayer-sync -muvb /home/pi/Videos/video.mp4\" > /etc/systemd/system/omxplayersync.service")
+    cxn.sudo("rm -rf /etc/systemd/system/omxplayersync.service")
+    append_text(cxn, "/etc/systemd/system/omxplayersync.service", "[Service]\nExecStart=/usr/bin/omxplayer-sync -muvb /home/pi/Videos/video.mp4")
+    cxn.sudo("systemctl enable omxplayersync.service")
+    cxn.sudo("systemctl start omxplayersync.service")
 
 @task
 def make_slave(junk):
-    cnx.sudo("echo \"ExecStart=/usr/bin/omxplayer-sync -luvb /home/pi/Videos/video.mp4\" > /etc/systemd/system/omxplayersync.service")
+    cxn.sudo("rm -rf /etc/systemd/system/omxplayersync.service")
+    append_text(cxn, "/etc/systemd/system/omxplayersync.service", "[Service]\nExecStart=/usr/bin/omxplayer-sync -luvb /home/pi/Videos/video.mp4")
+    cxn.sudo("systemctl enable omxplayersync.service")
+    cxn.sudo("systemctl start omxplayersync.service")
 
 @task
 def add_startup_delay(junk):
-    cnx.sudo("echo sleep 20 >> /etc/rc.local")
+    append_text(cxn, "/etc/rc.local", "sleep 20")
 
 @task
-def install_omxplayer_sync(cxn):
+def install_omxplayer_sync(junk):
     cxn.sudo("apt-get remove omxplayer")
     cxn.sudo("rm -rf /usr/bin/omxplayer /usr/bin/omxplayer.bin /usr/lib/omxplayer")
     cxn.sudo("apt-get install libpcre3 fonts-freefont-ttf fbset libssh-4 python3-dbus libssl-dev")
@@ -58,7 +64,7 @@ def install_omxplayer_sync(cxn):
     cxn.sudo("rpi-update")
 
 @task
-def remove_bloat(cxn):
+def remove_bloat(junk):
     cxn.sudo('apt update')
     cxn.sudo("apt-get -y remove --purge libreoffice*")
     cxn.sudo("apt-get -y remove --purge wolfram*")
@@ -68,3 +74,11 @@ def remove_bloat(cxn):
     cxn.sudo("dpkg --remove flashplugin-installer")
     cxn.sudo("apt-get clean")
     cxn.sudo("apt-get autoremove")
+
+@task
+def reboot(junk):
+    print('System reboot')
+    cxn.sudo('reboot now')
+
+def append_text(cxn, file_path, text):
+    cxn.sudo('echo "%s" | sudo tee -a %s' % (text, file_path))
