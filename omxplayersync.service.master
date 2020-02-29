@@ -1,9 +1,14 @@
 [Unit]
 Description=OMXplayer Sync Master Node
-
-[Install]
-WantedBy=multi-user.target
+After=network.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
+Restart=always
+RestartSec=1
+User=pi
 ExecStart=/usr/bin/omxplayer-sync -muvb /home/pi/Videos/video.mp4
+
+[Install]
+WantedBy=multi-user.target
