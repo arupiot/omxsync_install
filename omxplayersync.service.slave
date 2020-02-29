@@ -1,0 +1,9 @@
+[Unit]
+Description=OMXplayer Sync Slave Node.
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/omxplayer-sync -luvb /home/pi/Videos/video.mp4

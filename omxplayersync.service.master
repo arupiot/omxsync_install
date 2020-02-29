@@ -1,0 +1,9 @@
+[Unit]
+Description=OMXplayer Sync Master Node.
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/omxplayer-sync -muvb /home/pi/Videos/video.mp4
