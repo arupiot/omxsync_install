@@ -1,10 +1,8 @@
 try:
-    from config_local import (NEW_PASSWORD,
-                              NEW_USERNAME,
-                              NEW_HOSTNAME,
-                              ORIGINAL_HOSTNAME,
-                              ORIGINAL_USERNAME,
-                              ORIGINAL_PASSWORD,
+    from config_local import (
+                              HOSTNAME,
+                              USERNAME,
+                              PASSWORD,
                               ACCESS_IP,
                               )
 
