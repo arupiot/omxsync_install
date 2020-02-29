@@ -1,5 +1,5 @@
 [Unit]
-Description=OMXplayer Sync Slave Node.
+Description=OMXplayer Sync Slave Node
 
 [Install]
 WantedBy=multi-user.target
